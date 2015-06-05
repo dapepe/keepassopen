@@ -1,0 +1,7 @@
+[
+  "./src/lib/mootools/mootools-core-1.5.1.js",
+  "./src/lib/mootools/mootools-more-1.5.1.js",
+  "./bower_components/gx-core/dist/gx-core.js",
+  "./bower_components/gx-bootstrap/dist/gx-bootstrap.js",
+  "./src/lib/common/main.js"
+]

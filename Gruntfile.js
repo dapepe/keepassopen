@@ -1,0 +1,231 @@
+var fs = require('fs');
+
+module.exports = function(grunt) {
+
+    var JsFiles = JSON.parse(fs.readFileSync('./src/concat.js.json'));
+    var CssFiles = JSON.parse(fs.readFileSync('./src/concat.css.json'));
+
+	grunt.initConfig({
+		pkg: grunt.file.readJSON('package.json'),
+		distFolder: './dist',
+		uglify: {
+			options: {
+				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+			},
+			build: {
+				src: './dist/<%= pkg.name %>.js',
+				dest: './dist/<%= pkg.name %>.min.js'
+			}
+		},
+		concat: {
+			options: {
+				separator: ''
+			},
+			dist: {
+				src: JsFiles,
+				dest: './dist/<%= pkg.name %>.js'
+			}
+		},
+        cssmin: {
+            target: {
+                files: [{
+                    src: CssFiles,
+                    dest: './dist/assets/css/<%= pkg.name %>.min.css'
+                }]
+            }
+        },
+		less: {
+			dist: {
+				options: {
+					cleancss: true,
+					paths: [
+                        './src/less/*.less'
+                    ]
+				},
+				files: {
+					'./dist/assets/css/<%= pkg.name %>.css': './src/less/main.less'
+				}
+			}
+		},
+		jsvalidate: {
+			options:{
+				globals: {},
+				esprimaOptions: {},
+				verbose: false
+			},
+			targetName:{
+				files:{
+					files: [
+                        './src/lib/common/**.js'
+                    ]
+				}
+			}
+		},
+        replace: {
+            dist: {
+                options: {
+                    patterns: [
+                        {
+                            match: 'pkgname',
+                            replacement: '<%= pkg.name %>'
+                        },
+                        {
+                            match: 'pkgtitle',
+                            replacement: '<%= pkg.title %>'
+                        }
+                    ]
+                },
+                files: [
+                    {src: './src/index.html', dest: './dist/index.html'}
+                ]
+            }
+        },
+		compress: {
+			main: {
+				options: {
+					mode: 'zip',
+					archive: './releases/<%= pkg.name %>-<%= pkg.version %>.nw'
+				},
+				files: [
+					// {src: ['./dist'], filter: 'isFile'},
+					{
+                        expand: true,
+                        cwd: './dist',
+                        src: [
+                            'index.html',
+                            'package.json',
+                            '<%= pkg.name %>.js',
+                            'assets/**'
+                        ]
+                    }
+				]
+			}
+		},
+        copy: {
+            dist: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: './bower_components/bootstrap/dist/',
+                        src: 'fonts/**',
+                        dest: './dist/assets/'
+                    },
+                    {src: './src/app.ico', dest: './dist/assets/app.ico'}
+                ]
+            },
+            win32: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: './res/nwjs/',
+                        src: 'win32/**',
+                        dest: './releases/'
+                    }
+                ]
+            },
+            win64: {
+                files: [
+                    {
+                        expand: true,
+                        cwd: './res/nwjs/',
+                        src: 'win64/**',
+                        dest: './releases/'
+                    }
+                ]
+            }
+        },
+        exec: {
+            nwjs: {
+                cwd: './res/nwjs/win64/',
+                cmd: 'nw.exe ../../../releases/<%= pkg.name %>-<%= pkg.version %>.nw'
+            },
+            ico_win32: {
+                cwd: './res/resourcer/',
+                cmd: 'Resourcer.exe -op:upd -src:../../releases/win32/nw.exe -type:14 -name:IDR_MAINFRAME -file:../../src/app.ico'
+            },
+            ico_win64: {
+                cwd: './res/resourcer/',
+                cmd: 'Resourcer.exe -op:upd -src:../../releases/win64/nw.exe -type:14 -name:IDR_MAINFRAME -file:../../src/app.ico'
+            },
+            pack_win32: {
+                cwd: './releases/win32',
+                cmd: 'copy /b /y nw.exe + ..\\<%= pkg.name %>-<%= pkg.version %>.nw <%= pkg.name %>.exe'
+            },
+            pack_win64: {
+                cwd: './releases/win64',
+                cmd: 'copy /b /y nw.exe + ..\\<%= pkg.name %>-<%= pkg.version %>.nw <%= pkg.name %>.exe'
+            }
+        },
+        clean: {
+            win32: [
+                './releases/win32/'
+            ],
+            win64: [
+                './releases/win32/'
+            ]
+        }
+	});
+
+    grunt.registerTask('buildhtml', 'Build index.html', function(arg1) {
+        var initFile = fs.readFileSync('./index.html');
+        fs.writeFileSync(
+            './dist/index.html',
+            initFile.toString()
+                .replace(/\{pkgname\}/, pkg.name)
+                .replace(/\{apptitle\}/, pkg.title)
+        );
+    });
+
+    grunt.registerTask('nwpackage', 'Create nw.js package', function(arg1) {
+        if (arg1 == null) {
+            console.log('Missing arguement');
+            return;
+        }
+
+        var package = JSON.parse(fs.readFileSync('package.json'));
+        var properties = package.nwjs[arg1]
+
+        delete package.devDependencies;
+        delete package.nwjs;
+
+        for (var i in properties) {
+            if (properties.hasOwnProperty(i))
+                package[i] = properties[i];
+        }
+
+        fs.writeFileSync(
+            './dist/package.json',
+            JSON.stringify(package, null, '  ')
+        );
+    });
+
+    grunt.registerTask('release', 'Create nw.js executables', function(arg1) {
+        if (arg1 == null) {
+            console.log('Missing arguement');
+            return;
+        }
+
+        runt.task.run('default');
+        runt.task.run('nwpackage:dist');
+        runt.task.run('e:');
+        // fs.copyDir()
+    });
+
+	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+	grunt.loadNpmTasks('grunt-contrib-less');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-replace');
+	grunt.loadNpmTasks('grunt-jsvalidate');
+    grunt.loadNpmTasks('grunt-exec');
+
+	grunt.registerTask('default'       , ['jsvalidate', 'concat', 'less', 'cssmin', 'uglify', 'replace']);
+    grunt.registerTask('prepare'       , ['copy:dist']);
+    grunt.registerTask('run'           , ['default', 'nwpackage:dev', 'compress', 'exec:nwjs']);
+    grunt.registerTask('release-win32' , ['default', 'nwpackage:release', 'compress', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32']);
+    grunt.registerTask('release-win64' , ['default', 'nwpackage:release', 'compress', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64']);
+};

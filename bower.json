@@ -1,0 +1,10 @@
+{
+    "name"         : "Keepass Open",
+    "version"      : "1.0.0",
+    "dependencies" : {
+        "mootools"       : "~1.5.1",
+        "bootstrap"      : "~3.2.0",
+        "gx-core"        : "https://github.com/zeyon/gx-core.git",
+        "gx-bootstrap"   : "https://github.com/zeyon/gx-bootstrap.git"
+    }
+}
