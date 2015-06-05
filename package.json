@@ -31,10 +31,10 @@
       "main": "index.html",
       "private": true,
       "window": {
-        "toolbar": true,
-        "resizable": true,
-        "width": 800,
-        "height": 600
+        "toolbar": false,
+        "resizable": false,
+        "width": 300,
+        "height": 390
       }
     },
     "release": {
@@ -42,12 +42,13 @@
       "private": true,
       "window": {
         "toolbar": false,
-        "resizable": true,
-        "width": 800,
-        "height": 600,
-        "min_width": 600,
-        "min_height": 400
+        "resizable": false,
+        "width": 400,
+        "height": 500
       }
+    },
+    "packages": {
+
     }
   }
 }

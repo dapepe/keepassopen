@@ -1,5 +1,5 @@
 [
   "./bower_components/bootstrap/dist/css/bootstrap.css",
   "./bower_components/gx-bootstrap/dist/gx-bootstrap.css",
-  "./dist/assets/bootstrap/css/<%= pkg.name %>.css"
+  "./dist/assets/css/<%= pkg.name %>.css"
 ]

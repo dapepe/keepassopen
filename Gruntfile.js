@@ -62,12 +62,37 @@ module.exports = function(grunt) {
 			}
 		},
         replace: {
+            dev: {
+                options: {
+                    patterns: [
+                        {
+                            match: 'jsfile',
+                            replacement: '<%= pkg.name %>.js'
+                        },
+                        {
+                            match: 'cssfile',
+                            replacement: '<%= pkg.name %>.min.css'
+                        },
+                        {
+                            match: 'pkgtitle',
+                            replacement: '<%= pkg.title %>'
+                        }
+                    ]
+                },
+                files: [
+                    {src: './src/index.html', dest: './dist/index.html'}
+                ]
+            },
             dist: {
                 options: {
                     patterns: [
                         {
-                            match: 'pkgname',
-                            replacement: '<%= pkg.name %>'
+                            match: 'jsfile',
+                            replacement: '<%= pkg.name %>.min.js'
+                        },
+                        {
+                            match: 'cssfile',
+                            replacement: '<%= pkg.name %>.min.css'
                         },
                         {
                             match: 'pkgtitle',
@@ -108,6 +133,12 @@ module.exports = function(grunt) {
                         expand: true,
                         cwd: './bower_components/bootstrap/dist/',
                         src: 'fonts/**',
+                        dest: './dist/assets/'
+                    },
+                    {
+                        expand: true,
+                        cwd: './src/assets/',
+                        src: '**',
                         dest: './dist/assets/'
                     },
                     {src: './src/app.ico', dest: './dist/assets/app.ico'}
@@ -166,16 +197,6 @@ module.exports = function(grunt) {
         }
 	});
 
-    grunt.registerTask('buildhtml', 'Build index.html', function(arg1) {
-        var initFile = fs.readFileSync('./index.html');
-        fs.writeFileSync(
-            './dist/index.html',
-            initFile.toString()
-                .replace(/\{pkgname\}/, pkg.name)
-                .replace(/\{apptitle\}/, pkg.title)
-        );
-    });
-
     grunt.registerTask('nwpackage', 'Create nw.js package', function(arg1) {
         if (arg1 == null) {
             console.log('Missing arguement');
@@ -223,9 +244,10 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-jsvalidate');
     grunt.loadNpmTasks('grunt-exec');
 
-	grunt.registerTask('default'       , ['jsvalidate', 'concat', 'less', 'cssmin', 'uglify', 'replace']);
+	grunt.registerTask('default'       , ['jsvalidate', 'concat', 'less', 'cssmin', 'uglify']);
     grunt.registerTask('prepare'       , ['copy:dist']);
-    grunt.registerTask('run'           , ['default', 'nwpackage:dev', 'compress', 'exec:nwjs']);
-    grunt.registerTask('release-win32' , ['default', 'nwpackage:release', 'compress', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32']);
-    grunt.registerTask('release-win64' , ['default', 'nwpackage:release', 'compress', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64']);
+    grunt.registerTask('run'           , ['default', 'replace:dev', 'nwpackage:dev', 'compress', 'exec:nwjs']);
+    grunt.registerTask('release-prep'  , ['default', 'replace:dist', 'nwpackage:release', 'compress']);
+    grunt.registerTask('release-win32' , ['release-prep', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32']);
+    grunt.registerTask('release-win64' , ['release-prep', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64']);
 };

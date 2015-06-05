@@ -3,5 +3,8 @@
   "./src/lib/mootools/mootools-more-1.5.1.js",
   "./bower_components/gx-core/dist/gx-core.js",
   "./bower_components/gx-bootstrap/dist/gx-bootstrap.js",
-  "./src/lib/common/main.js"
+  "./src/lib/common/view.main.js",
+  "./src/lib/common/view.settings.js",
+  "./src/lib/common/config.js",
+  "./src/lib/common/init.js"
 ]
