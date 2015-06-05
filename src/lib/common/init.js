@@ -1,6 +1,7 @@
 var fs = require('fs'),
     gui = require('nw.gui'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    exec = require('child_process').exec;
 
 window.addEvent('appready', function() {
     var view;
@@ -14,11 +15,11 @@ window.addEvent('appready', function() {
             view = new ViewSettings();
             break;
         default:
-            gui.Window.get().showDevTools;
             view = new ViewMain();
             gui.Window.get().on('close', function() {
                 gui.App.quit();
             });
+            view.openSettings();
             break;
     }
 

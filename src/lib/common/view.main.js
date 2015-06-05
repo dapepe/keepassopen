@@ -15,25 +15,14 @@ var ViewMain = new Class({
                 'input': {'tag': 'input', 'type': 'password', 'class': 'form-control', 'placeholder': 'Password'}
             }},
             'footer': {'class': 'ptop-10', 'children': {
-                'settings': {'tag': 'button', 'type': 'button', 'class': 'left btn btn-default', 'html': '<span class="indicator glyphicon glyphicon-wrench"></span> Settings'},
-                'submit': {'tag': 'button', 'type': 'submit', 'class': 'right btn btn-primary', 'html': '<span class="indicator glyphicon glyphicon-ok-circle"></span> Login'},
+                'settings': {'tag': 'button', 'type': 'button', 'class': 'left btn btn-primary', 'html': '<span class="indicator glyphicon glyphicon-wrench"></span> Settings'},
+                'submit': {'tag': 'button', 'type': 'submit', 'class': 'right btn btn-success', 'html': '<span class="indicator glyphicon glyphicon-ok-circle"></span> Login'},
                 'clear': {'class': 'clear'}
             }}
         }});
 
         this.gui._footer._settings.addEvent('click', function() {
-            if (this.settingsWindow == null) {
-                this.settingsWindow = gui.Window.open('index.html#settings', {
-                    title: 'Settings',
-                    toolbar: false,
-                    position: 'center',
-                    resizable: true
-
-                });
-                this.settingsWindow.on('close', function() {
-                    this.settingsWindow = null;
-                }.bind(this));
-            }
+            this.openSettings();
         }.bind(this));
 
         this.addEvent('reset', function() {
@@ -42,16 +31,49 @@ var ViewMain = new Class({
         }.bind(this));
         this.gui.addEvent('submit', function(event) {
             event.preventDefault();
-            this.setAuth();
+            this.openFile();
         }.bind(this));
         this.gui.addEvent('keypress', function(event) {
             if (event.key == 'enter') {
                 event.preventDefault();
-                this.setAuth();
+                this.openFile();
             }
         }.bind(this));
     },
-    setAuth: function() {
+
+    openSettings: function() {
+        if (this.settingsWindow != null) {
+            this.settingsWindow.focus();
+            return;
+        }
+
+        this.settingsWindow = gui.Window.open('index.html#settings', {
+            title: 'Settings',
+            toolbar: true,
+            position: 'center',
+            resizable: true,
+            resizable: true,
+            width: 600,
+            height: 700
+        });
+        this.settingsWindow.on('close', function() {
+            this.settingsWindow = null;
+        }.bind(this));
+    },
+
+    openFile: function() {
+        child = exec('"C:\\Program Files (x86)\\KeePass Password Safe 2\\KeePass.exe" "Z:\\cloud\\Zeyon\\Datacenter\\zfx.kdbx" -pw:zfx123',
+            function (error, stdout, stderr) {
+                console.log('stdout: ' + stdout);
+                console.log('stderr: ' + stderr);
+                if (error !== null) {
+                    console.log('exec error: ' + error);
+                }
+            }
+        );
+
+        return;
+
         var userid = this.gui._username._input.get('value');
         var password = this.gui._password._input.get('value');
 
