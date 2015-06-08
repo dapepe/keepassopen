@@ -4,7 +4,7 @@ var ViewMain = new Class({
 
     initialize: function() {
         console.log('test2');
-        this.gui = __({'tag': 'form', 'class': 'rbox', 'children': {
+        this.gui = __({'tag': 'form', 'class': 'pad-10', 'children': {
             'logo': {'class': 'a-c ptop-10 pbottom-20', 'child': {'tag': 'img', 'alt': 'KeePass Open', 'src': './assets/logo.png'}},
             'username': {'class': 'form-group', 'children': {
                 'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-user"></span> Username'},
@@ -43,6 +43,7 @@ var ViewMain = new Class({
 
     openSettings: function() {
         if (this.settingsWindow != null) {
+            this.settingsWindow.show();
             this.settingsWindow.focus();
             return;
         }
@@ -53,8 +54,8 @@ var ViewMain = new Class({
             position: 'center',
             resizable: true,
             resizable: true,
-            width: 600,
-            height: 700
+            width: 800,
+            height: 600
         });
         this.settingsWindow.on('close', function() {
             this.settingsWindow = null;

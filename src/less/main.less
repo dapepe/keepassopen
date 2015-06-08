@@ -1,6 +1,40 @@
 @import "base";
 @import "common";
 
-body {
-  padding: 20px;
+html, body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+.settingsdialog {
+  height: 100%;
+  >table {
+    height: 100%;
+    width: 100%;
+    >tr {
+      &:first-child {
+        >td {
+          height: 100%;
+        }
+      }
+      height: 100%;
+      >td {
+        padding: 10px;
+        &:last-child {
+          background: #e6e6e6;
+          border-left: 1px solid #cdcdcd;
+          width: 200px;
+        }
+        >button {
+          width: 100%;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+
+  .fileList {
+    border: 1px solid #eaeaea;
+  }
 }

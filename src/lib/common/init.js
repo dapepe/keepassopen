@@ -1,6 +1,6 @@
 var fs = require('fs'),
     gui = require('nw.gui'),
-    crypto = require('crypto'),
+    crypt = require('crypto'),
     exec = require('child_process').exec;
 
 window.addEvent('appready', function() {
