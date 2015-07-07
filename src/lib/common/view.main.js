@@ -104,6 +104,7 @@ var ViewMain = new Class({
 
         this.settingsWindow = gui.Window.open('index.html#settings', {
             title: 'Settings',
+            icon: 'assets/app.ico',
             toolbar: false,
             position: 'center',
             resizable: true,

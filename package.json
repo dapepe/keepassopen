@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Open multiple KeePass files",
   "author": "Peter Haider <peter.haider@zeyos.com>",
+  "organization": "ZeyOS",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -31,24 +32,23 @@
       "main": "index.html",
       "private": true,
       "window": {
-        "toolbar": false,
+        "icon": "assets/icon.png",
+        "toolbar": true,
         "resizable": false,
         "width": 500,
-        "height": 225
+        "height": 250
       }
     },
     "release": {
       "main": "index.html",
       "private": true,
       "window": {
+        "icon": "assets/icon.png",
         "toolbar": false,
         "resizable": false,
         "width": 500,
         "height": 225
       }
-    },
-    "packages": {
-
     }
   }
 }

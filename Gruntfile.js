@@ -9,11 +9,8 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		distFolder: './dist',
 		uglify: {
-			options: {
-				banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
-			},
 			build: {
-				src: './dist/<%= pkg.name %>.js',
+				src : './dist/<%= pkg.name %>.js',
 				dest: './dist/<%= pkg.name %>.min.js'
 			}
 		},
@@ -103,10 +100,39 @@ module.exports = function(grunt) {
                 files: [
                     {src: './src/index.html', dest: './dist/index.html'}
                 ]
+            },
+            nsis64: {
+                options: {
+                    patterns: [
+                        {
+                            match: 'pkgname',
+                            replacement: '<%= pkg.name %>'
+                        },
+                        {
+                            match: 'pkgtitle',
+                            replacement: '<%= pkg.title %>'
+                        },
+                        {
+                            match: 'pkgorg',
+                            replacement: '<%= pkg.organization %>'
+                        },
+                        {
+                            match: 'pkgversion',
+                            replacement: '<%= pkg.version %>'
+                        },
+                        {
+                            match: 'dir',
+                            replacement: 'win64'
+                        }
+                    ]
+                },
+                files: [
+                    {src: './res/nsis/setup.nsi', dest: './releases/setup64.nsi'}
+                ]
             }
         },
 		compress: {
-			main: {
+			dev: {
 				options: {
 					mode: 'zip',
 					archive: './releases/<%= pkg.name %>-<%= pkg.version %>.nw'
@@ -124,7 +150,26 @@ module.exports = function(grunt) {
                         ]
                     }
 				]
-			}
+			},
+            dist: {
+                options: {
+                    mode: 'zip',
+                    archive: './releases/<%= pkg.name %>-<%= pkg.version %>.nw'
+                },
+                files: [
+                    // {src: ['./dist'], filter: 'isFile'},
+                    {
+                        expand: true,
+                        cwd: './dist',
+                        src: [
+                            'index.html',
+                            'package.json',
+                            '<%= pkg.name %>.min.js',
+                            'assets/**'
+                        ]
+                    }
+                ]
+            }
 		},
         copy: {
             dist: {
@@ -193,6 +238,12 @@ module.exports = function(grunt) {
             ],
             win64: [
                 './releases/win32/'
+            ],
+            nw32: [
+                './releases/win32/nw.exe'
+            ],
+            nw64: [
+                './releases/win64/nw.exe'
             ]
         }
 	});
@@ -246,8 +297,8 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('default'       , ['jsvalidate', 'concat', 'less', 'cssmin', 'uglify']);
     grunt.registerTask('prepare'       , ['copy:dist']);
-    grunt.registerTask('run'           , ['default', 'replace:dev', 'nwpackage:dev', 'compress', 'exec:nwjs']);
-    grunt.registerTask('release-prep'  , ['default', 'replace:dist', 'nwpackage:release', 'compress']);
-    grunt.registerTask('release-win32' , ['release-prep', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32']);
-    grunt.registerTask('release-win64' , ['release-prep', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64']);
+    grunt.registerTask('run'           , ['default', 'replace:dev', 'nwpackage:dev', 'compress:dev', 'exec:nwjs']);
+    grunt.registerTask('release-prep'  , ['default', 'replace:dist', 'nwpackage:release', 'compress:dist']);
+    grunt.registerTask('release-win32' , ['release-prep', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32', 'clean:nw32']);
+    grunt.registerTask('release-win64' , ['release-prep', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64', 'clean:nw64', 'replace:nsis64']);
 };
