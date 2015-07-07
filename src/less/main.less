@@ -7,31 +7,33 @@ html, body {
   height: 100%;
 }
 
+.logindialog {
+  position: relative;
+  .loginform {
+    position: absolute;
+    top: 10px;
+    left: 200px;
+
+    input {
+      width: 270px;
+    }
+  }
+}
+
 .settingsdialog {
   height: 100%;
-  >table {
-    height: 100%;
+  .form {
+    padding-bottom: 60px;
+  }
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    >tr {
-      &:first-child {
-        >td {
-          height: 100%;
-        }
-      }
-      height: 100%;
-      >td {
-        padding: 10px;
-        &:last-child {
-          background: #e6e6e6;
-          border-left: 1px solid #cdcdcd;
-          width: 200px;
-        }
-        >button {
-          width: 100%;
-          margin-top: 10px;
-        }
-      }
-    }
+    padding: 10px;
+    height: 50px;
+    background: #EFEFEF;
+    border-top: #dcdcdc;
   }
 
   .fileList {

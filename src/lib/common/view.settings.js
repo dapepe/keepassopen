@@ -1,5 +1,10 @@
 var ViewSettings = new Class({
+    defaulTimeout: 1000,
+
     initialize: function () {
+        var win = gui.Window.get();
+        win.viewSettings = this;
+
         this.table = new gx.bootstrap.Table(new Element('div', {'class': 'fileList'}), {
             'cols': [
                 {
@@ -35,35 +40,31 @@ var ViewSettings = new Class({
             'selectable': false
         });
 
-        this.gui = __({'class': 'settingsdialog', 'children': {
-            'table': {'tag': 'table', 'children': {
-                'row1': {'tag': 'tr', 'children': {
-                    'body': {'tag': 'td', 'valign': 'top', 'rowspan': 2, 'children': {
-                        'exec': {'class': 'form-group has-feedback', 'children': {
-                            'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-cog"></span> KeePass Executable'},
-                            'input': {'tag': 'input', 'type': 'text', 'class': 'form-control', 'placeholder': 'Select file'},
-                            'icon': {'tag': 'span', 'type': 'text', 'class': 'glyphicon glyphicon-warning-sign form-control-feedback', 'aria-hidden': 'true'}
-                        }},
-                        'password': {'class': 'form-group', 'children': {
-                            'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-lock"></span> Password'},
-                            'input': {'tag': 'input', 'type': 'password', 'class': 'form-control'}
-                        }},
-                        'files': {'class': 'form-group', 'children': {
-                            'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-th-list"></span> KeePass Files'},
-                            'input': this.table
-                        }}
-                    }},
-                    'menu1': {'tag': 'td', 'valign': 'top', 'children': {
-                        'load': {'tag': 'button', 'type': 'submit', 'class': 'btn btn-primary', 'html': '<span class="indicator glyphicon glyphicon-floppy-open"></span> Load settings file'},
-                        'add': {'tag': 'button', 'type': 'submit', 'class': 'btn btn-default', 'html': '<span class="indicator glyphicon glyphicon-plus"></span> Add .kdbx'}
-                    }}
+        this.gui = __({'class': 'settingsdialog pad-10', 'children': {
+            'form': {'class': 'form', 'children': {
+                'exec': {'class': 'form-group has-feedback', 'children': {
+                    'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-cog"></span> KeePass Executable'},
+                    'input': {'tag': 'input', 'type': 'text', 'class': 'form-control', 'placeholder': 'Select file'},
+                    'icon': {'tag': 'span', 'type': 'text', 'class': 'glyphicon glyphicon-warning-sign form-control-feedback', 'aria-hidden': 'true'}
                 }},
-                'row2': {'tag': 'tr', 'children': {
-                    'menu2': {'tag': 'td', 'valign': 'bottom', 'children': {
-                        'close': {'tag': 'button', 'type': 'button', 'class': 'btn btn-danger', 'html': '<span class="indicator glyphicon glyphicon-remove"></span> Close'},
-                        'save': {'tag': 'button', 'type': 'submit', 'class': 'btn btn-success', 'html': '<span class="indicator glyphicon glyphicon-ok"></span> Save'},
-                    }}
+                'password': {'class': 'form-group', 'children': {
+                    'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-lock"></span> Password'},
+                    'input': {'tag': 'input', 'type': 'password', 'class': 'form-control'}
+                }},
+                'timeout': {'class': 'form-group', 'children': {
+                    'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-pause"></span> Timeout'},
+                    'input': {'tag': 'input', 'type': 'text', 'class': 'form-control'}
+                }},
+                'files': {'class': 'form-group', 'children': {
+                    'label': {'tag': 'label', 'html': '<span class="glyphicon glyphicon-th-list"></span> KeePass Files'},
+                    'input': this.table
                 }}
+            }},
+            'footer': {'class': 'footer', 'children': {
+                'add'  : {'tag': 'button', 'type': 'button', 'class': 'left btn btn-default', 'html': '<span class="indicator glyphicon glyphicon-plus"></span> Add .kdbx file'},
+                'save' : {'tag': 'button', 'type': 'submit', 'class': 'right mleft-10 btn btn-success', 'html': '<span class="indicator glyphicon glyphicon-ok"></span> Save'},
+                'close': {'tag': 'button', 'type': 'button', 'class': 'right btn btn-danger', 'html': '<span class="indicator glyphicon glyphicon-remove"></span> Close'},
+                'clear': {'class': 'clear'}
             }}
         }});
 
@@ -96,9 +97,9 @@ var ViewSettings = new Class({
             ]
         });
 
-        this.txtPassword = this.gui._table._row1._body._password._input;
+        this.txtPassword = this.gui._form._password._input;
 
-        this.execPicker = this.gui._table._row1._body._exec;
+        this.execPicker = this.gui._form._exec;
         this.txtFilename = this.execPicker._input;
         this.txtFilename.addEvent('click', function() {
             this.selectFile('.exe', function(filename) {
@@ -106,21 +107,21 @@ var ViewSettings = new Class({
             }.bind(this));
         }.bind(this));
 
-        this.gui._table._row1._menu1._load.addEvent('click', function() {
-            this.openSettings();
-        }.bind(this));
-
-        this.gui._table._row1._menu1._add.addEvent('click', function() {
+        this.gui._footer._add.addEvent('click', function() {
             this.selectFile('.kdbx', function(filename) {
+                for (var i = 0 ; i < this.table._rows.length; i++) {
+                    if (this.table._rows[i].path == filename)
+                        return;
+                }
+
                 this.table.addData([{path: filename, password: ''}]);
             }.bind(this));
         }.bind(this));
 
-
-        this.gui._table._row2._menu2._close.addEvent('click', function() {
+        this.gui._footer._close.addEvent('click', function() {
             gui.Window.get().hide();
         }.bind(this));
-        this.gui._table._row2._menu2._save.addEvent('click', function() {
+        this.gui._footer._save.addEvent('click', function() {
             this.save();
         }.bind(this));
     },
@@ -161,12 +162,24 @@ var ViewSettings = new Class({
         return this.execPicker._input.get('value');
     },
 
+    setTimeout: function(timeout) {
+        this.gui._form._timeout._input.set('value', timeout);
+    },
+
+    getTimeout: function() {
+        var timeout = parseInt(this.gui._form._timeout._input.get('value'));
+        if (typeOf(timeout) == 'number')
+            return Math.round(timeout);
+
+        return this.defaulTimeout;
+    },
+
     setPassword: function(password) {
-        this.gui._table._row1._body._password._input.set('value', password);
+        this.gui._form._password._input.set('value', password);
     },
 
     getPassword: function() {
-        return this.gui._table._row1._body._password._input.get('value');
+        return this.gui._form._password._input.get('value');
     },
 
     selectFile: function (accept, callback, nwsaveas) {
@@ -191,7 +204,9 @@ var ViewSettings = new Class({
         if (conf.read()) {
             this.setPassword(conf.password);
             this.setExecPath(conf.data.exec);
+            this.setTimeout(conf.data.timeout);
             this.table.setData(conf.data.filelist);
+            this.settingsFile = filename;
             return true;
         }
 
@@ -199,23 +214,46 @@ var ViewSettings = new Class({
     },
 
     save: function() {
+        if (this.settingsFile == null) {
+            this.selectFile('.json', function(filename) {
+                this.writeSettingsFile(filename);
+                global.ViewMain.setJsonPath(filename);
+            }.bind(this), 'keepass.json');
+            return;
+        }
+
+        this.writeSettingsFile(this.settingsFile);
+    },
+
+    writeSettingsFile: function(filename) {
         var filelist = [];
         this.table._rows.each(function(row) {
             filelist.push({
-                path: row.filepath,
+                path: row.path,
                 password: row.txtPassword.get('value')
             });
         });
 
-        this.selectFile('.json', function(filename) {
-            var conf = new Config({
-                'filename': filename,
-                'password': this.getPassword()
-            });
-            conf.setFilelist(filelist);
-            conf.setExec(this.getExecPath());
-            conf.write();
-            gui.Window.get().hide();
-        }.bind(this), 'keepass.json');
+        var conf = new Config({
+            'filename': filename,
+            'password': this.getPassword()
+        });
+        conf.setFilelist(filelist);
+        conf.setExec(this.getExecPath());
+        conf.setTimeout(this.getTimeout());
+        conf.write();
+        gui.Window.get().hide();
+    },
+
+    close: function() {
+        gui.Window.get().hide();
+    },
+
+    reset: function() {
+        this.setExecPath();
+        this.setTimeout(this.defaulTimeout);
+        this.setPassword('');
+        this.table.empty();
+        this.settingsFile = null;
     }
 });

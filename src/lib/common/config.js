@@ -30,6 +30,10 @@ var Config = new Class({
         this.data.exec = filepath;
     },
 
+    setTimeout: function(timeout) {
+        this.data.timeout = timeout;
+    },
+
     setFilelist: function(filelist) {
         this.data.filelist = filelist;
     },
@@ -47,8 +51,6 @@ var Config = new Class({
         this.data.filelist.each(function(elem) {
             elem.password = this.decryptString(elem.password);
         }.bind(this));
-
-        console.log(this.data);
 
         return true;
     },
