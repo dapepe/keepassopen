@@ -36,7 +36,7 @@
         "toolbar": true,
         "resizable": false,
         "width": 500,
-        "height": 250
+        "height": 260
       }
     },
     "release": {

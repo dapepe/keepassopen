@@ -101,6 +101,35 @@ module.exports = function(grunt) {
                     {src: './src/index.html', dest: './dist/index.html'}
                 ]
             },
+            nsis32: {
+                options: {
+                    patterns: [
+                        {
+                            match: 'pkgname',
+                            replacement: '<%= pkg.name %>'
+                        },
+                        {
+                            match: 'pkgtitle',
+                            replacement: '<%= pkg.title %>'
+                        },
+                        {
+                            match: 'pkgorg',
+                            replacement: '<%= pkg.organization %>'
+                        },
+                        {
+                            match: 'pkgversion',
+                            replacement: '<%= pkg.version %>'
+                        },
+                        {
+                            match: 'platform',
+                            replacement: 'win32'
+                        }
+                    ]
+                },
+                files: [
+                    {src: './res/nsis/setup.nsi', dest: './releases/setup32.nsi'}
+                ]
+            },
             nsis64: {
                 options: {
                     patterns: [
@@ -121,7 +150,7 @@ module.exports = function(grunt) {
                             replacement: '<%= pkg.version %>'
                         },
                         {
-                            match: 'dir',
+                            match: 'platform',
                             replacement: 'win64'
                         }
                     ]

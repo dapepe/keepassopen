@@ -69,10 +69,14 @@ var ViewMain = new Class({
         }.bind(this));
 
         this.initSettingsWindow();
+
+        if (localStorage.lastFile != null) {
+            this.setJsonPath(localStorage.lastFile);
+        }
     },
 
     setJsonPath: function(path) {
-        if (path == null) {
+        if (path == null || !fs.existsSync(path)) {
             this.jsonPicker.addClass('has-warning');
             this.jsonPicker.removeClass('has-success');
             this.jsonPicker._input.erase('value');
@@ -158,6 +162,9 @@ var ViewMain = new Class({
             alert('Invalid password');
             return;
         }
+
+        // Store the last file
+        localStorage.lastFile = path;
 
         var timeout = conf.data.timeout;
         function processQueue() {

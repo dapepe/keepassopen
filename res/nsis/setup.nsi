@@ -8,14 +8,14 @@
 
   !define MUI_PRODUCT "@@pkgtitle"
   !define MUI_ORG "@@pkgorg"
-  !define MUI_PLATFORM "@@dir"
+  !define MUI_PLATFORM "@@platform"
   !define MUI_FILE "@@pkgname"
   !define MUI_VERSION "@@pkgversion"
   !define MUI_BRANDINGTEXT "${MUI_PRODUCT} ${MUI_VERSION}"
 
   ;Name and file
   Name "${MUI_PRODUCT}"
-  OutFile "${MUI_FILE}-${MUI_VERSION}.exe"
+  OutFile "${MUI_FILE}-${MUI_PLATFORM}-${MUI_VERSION}.exe"
   BrandingText "${MUI_PRODUCT} Setup ${MUI_VERSION}"
 
   ;Default installation folder
