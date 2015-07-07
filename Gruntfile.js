@@ -328,6 +328,6 @@ module.exports = function(grunt) {
     grunt.registerTask('prepare'       , ['copy:dist']);
     grunt.registerTask('run'           , ['default', 'replace:dev', 'nwpackage:dev', 'compress:dev', 'exec:nwjs']);
     grunt.registerTask('release-prep'  , ['default', 'replace:dist', 'nwpackage:release', 'compress:dist']);
-    grunt.registerTask('release-win32' , ['release-prep', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32', 'clean:nw32']);
+    grunt.registerTask('release-win32' , ['release-prep', 'clean:win32', 'copy:win32', 'exec:ico_win32', 'exec:pack_win32', 'clean:nw32', 'replace:nsis32']);
     grunt.registerTask('release-win64' , ['release-prep', 'clean:win64', 'copy:win64', 'exec:ico_win64', 'exec:pack_win64', 'clean:nw64', 'replace:nsis64']);
 };
