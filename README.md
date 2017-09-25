@@ -10,7 +10,7 @@ Opens multiple KeePass databases with one master password.
 Download
 --------
 
-You can download the current release on [Dropbox](https://www.dropbox.com/sh/uub06ze62etfr9n/AAB1eJ11auSZbetFY40DonT_a?dl=0)
+You can download the current release on [Dropbox](https://raw.githubusercontent.com/dapepe/keepassopen/master/keepass-open-win32-1.0.0.exe)
 
 
 Building

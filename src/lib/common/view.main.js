@@ -145,7 +145,11 @@ var ViewMain = new Class({
         filepicker.click();
     },
 
+    opening: false,
     openFile: function() {
+        if (this.opening)
+            return;
+
         var password = this.gui._form._password._input.get('value'),
             path = this.getJsonPath(),
             commandQueue = [];
@@ -166,6 +170,7 @@ var ViewMain = new Class({
         // Store the last file
         localStorage.lastFile = path;
 
+        this.opening = true;
         var timeout = conf.data.timeout;
         function processQueue() {
             if (conf.data.filelist.length == 0)
